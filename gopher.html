@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            cursor: url(./cursor.svg) 30 30, auto;
+            background: #b2d3cd;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .all {
+            width: 100vh;
+            height: 100vw;
+            position: relative;
+        }
+
+        .bathroom {
+            width: 615px;
+            height: 615px;
+            position: absolute;
+            top: calc((100vh - 615px)/2);
+            left: 300px;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            display: inline-block;
+            background-image: url(./02.svg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .bath{
+            width: 100%;
+            height: 100%;
+        }
+
+        .normal {
+            background-image: url(./03.svg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .dance {
+            background-image: url(./04.svg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .bath img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .television {
+            width: 250px;
+            height: 250px;
+            background-image: url(./score.svg);
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0 auto;
+            text-align: center;
+            position: absolute;
+            top: calc((100vh - 615px)/2 + 365px);
+            left: 915px;
+        }
+
+        .screen {
+            width: 55%;
+            height: 50%;
+            margin-top: 83px;
+            margin-left: 57px;
+        }
+
+        #startBtn {
+            width: 100%;
+            height: 20px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: transparent;
+            color: #333333;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="bathroom">
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+        <div class="box">
+            <div class="bath"><img src="./01.svg"></div>
+        </div>
+    </div>
+    <div class="television">
+        <div class="screen">
+            <input type="button" value="Tap to tart" id="startBtn"> <span>
+            目前分數: <span id="scoreText">0</span> <br>
+            最高分數: <span id="highScoreText">0</span> <br>
+            冠軍: <span id="highNameText">沒有人</span>
+        </div>
+    </div>
+    
+    <script>
+        let score = 0;
+        let scoreText = document.getElementById("scoreText");
+        let startBtn = document.getElementById("startBtn");
+        let bath = document.getElementsByClassName("bath");
+
+        let gameTimer = 0;
+
+        let high = { name: "", score: 0 };
+        let highNameText = document.getElementById("highNameText");
+        let highScoreText = document.getElementById("highScoreText");
+
+        let highStorage = window.localStorage.getItem("highscore");
+        if(highStorage != null) {
+            high = JSON.parse(highStorage);
+            highNameText.innerText = high.name;
+            highScoreText.innerText = high.score;
+        }
+
+        startBtn.onclick = function() {
+            startBtn.setAttribute("disabled", true);
+
+            score = 0;
+            scoreText.innerText = score;
+
+            gameTimer = setInterval(game, 1000);
+            game();
+            setTimeout(function() {
+                clearInterval(gameTimer);
+                for(let i=0; i<9; i++) {
+                    bath[i].classList.remove("normal");
+                    bath[i].classList.remove("dance");
+                }
+                alert(`時間到，你得到 ${score} 分!`);
+                startBtn.removeAttribute("disabled");
+
+                if(score > high.score) {
+                    let playerName = prompt("恭喜你得到最高分，請輸入你的名字");
+                    high.name = playerName;
+                    highNameText.innerText = playerName;
+                    high.score = score;
+                    highScoreText.innerText = score;
+
+                    window.localStorage.setItem("highscore", JSON.stringify(high));
+                }
+            }, 10000);
+        }
+
+        let game = function() {
+            for(let i=0; i<9; i++) {
+                bath[i].classList.remove("normal");
+                bath[i].classList.remove("dance");
+            }
+            
+            for(let i=0; i<3; i++) {
+                let rand = Math.floor(Math.random()*9);
+                bath[rand].classList.add("normal");
+            }
+        }
+
+        for(let i=0; i<9; i++) {
+            bath[i].onclick = function() {
+                if(bath[i].classList.contains("normal")) {
+                    bath[i].classList.remove("normal");
+                    bath[i].classList.add("dance");
+                    score++;
+                    scoreText.innerText = score;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
